@@ -15,19 +15,23 @@ import SearchBox from "../SearchBox/SearchBox.tsx";
 import CreateMessage from "../CreateMessage/CreateMessage.tsx";
 import Error from "../Error/Error.tsx";
 
-type Modal = "form" | "error" | "create" | "delete";
+type ModalType = "form" | "error" | "create" | "delete";
 
 export default function App() {
   const [page, setPage] = useState(1);
   const [isModal, setIsModal] = useState(false);
   const [word, setWord] = useState("");
-  const [typeModal, setTypeModal] = useState<Modal>("form");
+  const [typeModal, setTypeModal] = useState<ModalType>("form");
   const [message, setMessage] = useState<Note | null>(null);
   const [error, setError] = useState("");
 
   const { data } = useQuery({
     queryKey: ["note", page, word],
-    queryFn: () => fetchNotes(page, word),
+    queryFn: () =>
+      fetchNotes({
+        page,
+        search: word,
+      }),
     placeholderData: keepPreviousData,
   });
 
@@ -45,8 +49,7 @@ export default function App() {
   }
 
   const changeWord = useDebouncedCallback((newWord: string) => {
-    const page = 1;
-    setPage(page);
+    setPage(1);
     setWord(newWord);
   }, 500);
 
@@ -65,6 +68,7 @@ export default function App() {
           Create note +
         </button>
       </header>
+
       {data && data.notes.length > 0 && (
         <NoteList
           setError={setError}
@@ -74,6 +78,7 @@ export default function App() {
           noteList={data.notes}
         />
       )}
+
       {isModal && (
         <Modal onClose={closeModal}>
           {typeModal === "form" && (
