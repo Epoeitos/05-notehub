@@ -11,7 +11,7 @@ interface FetchNotesParams {
   search?: string;
   perPage?: number;
   tag?: string;
-  sortBy?: "createdAt" | "updatedAt";
+  sortBy?: "created" | "updated"; 
 }
 
 const token = import.meta.env.VITE_NOTEHUB_TOKEN;
