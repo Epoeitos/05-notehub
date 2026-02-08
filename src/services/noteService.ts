@@ -23,16 +23,19 @@ export async function fetchNotes({
   tag,
   sortBy,
 }: FetchNotesParams): Promise<FetchNotesResponse> {
+  const params: Record<string, unknown> = {
+    page,
+    perPage,
+  };
+
+  if (search?.trim()) params.search = search.trim();
+  if (tag) params.tag = tag;
+  if (sortBy) params.sortBy = sortBy;
+
   const res = await axios.get<FetchNotesResponse>(
     "https://notehub-public.goit.study/api/notes",
     {
-      params: {
-        page,
-        perPage,
-        search: search?.trim() || undefined,
-        tag,
-        sortBy,
-      },
+      params,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -41,6 +44,7 @@ export async function fetchNotes({
 
   return res.data;
 }
+
 
 export async function createNote(note: NewNote): Promise<Note> {
   const res = await axios.post<Note>(
